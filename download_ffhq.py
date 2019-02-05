@@ -69,13 +69,15 @@ def download_file(session, file_spec, stats, chunk_size=128, num_attempts=10):
         try:
             # Download.
             data_md5 = hashlib.md5()
-            with session.get(file_url, stream=True) as res, open(tmp_path, 'wb') as f:
-                for chunk in res.iter_content(chunk_size=chunk_size<<10):
-                    f.write(chunk)
-                    data_size += len(chunk)
-                    data_md5.update(chunk)
-                    with stats['lock']:
-                        stats['bytes_done'] += len(chunk)
+            with session.get(file_url, stream=True) as res:
+                res.raise_for_status()
+                with open(tmp_path, 'wb') as f:
+                    for chunk in res.iter_content(chunk_size=chunk_size<<10):
+                        f.write(chunk)
+                        data_size += len(chunk)
+                        data_md5.update(chunk)
+                        with stats['lock']:
+                            stats['bytes_done'] += len(chunk)
 
             # Validate.
             if 'file_size' in file_spec and data_size != file_spec['file_size']:
