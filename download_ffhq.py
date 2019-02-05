@@ -56,10 +56,10 @@ license_specs = {
 
 #----------------------------------------------------------------------------
 
-def download_file(session, file_spec, stats, chunk_size=128, num_attempts=10, base_directory=""):
+def download_file(session, file_spec, stats, chunk_size=128, num_attempts=10, download_directory=""):
     file_path = file_spec['file_path']
     file_url = file_spec['file_url']
-    file_path = os.path.join(base_directory, file_path)
+    file_path = os.path.join(download_directory, file_path)
     file_dir = os.path.dirname(file_path)
     tmp_path = file_path + '.tmp.' + uuid.uuid4().hex
     if file_dir:
@@ -385,7 +385,7 @@ def run_cmdline(argv):
     parser.add_argument('--timing_window',      help='samples for estimating download eta (default: 50)', type=int, default=50, metavar='LEN')
     parser.add_argument('--chunk_size',         help='chunk size for each download thread (default: 128)', type=int, default=128, metavar='KB')
     parser.add_argument('--num_attempts',       help='number of download attempts per file (default: 10)', type=int, default=10, metavar='NUM')
-    parser.add_argument('--base_directory',     help="directory to save the downloaded files (default: current folder)", default="")
+    parser.add_argument('--download_directory', help="directory to save the downloaded files (default: current folder)", default="")
 
     args = parser.parse_args()
     if not args.tasks:
