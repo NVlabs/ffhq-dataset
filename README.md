@@ -144,3 +144,7 @@ The `ffhq-dataset-v1.json` file contains the following information for each imag
   ...
 }
 ```
+
+## Acknowledgements
+
+We thank Jaakko Lehtinen, David Luebke, and Tuomas Kynk&auml;&auml;nniemi for in-depth discussions and helpful comments; Janne Hellsten, Tero Kuosmanen, and Pekka J&auml;nis for compute infrastructure and help with the code release.
