@@ -13,7 +13,7 @@ Flickr-Faces-HQ (FFHQ) is a high-quality image dataset of human faces, originall
 > Tero Karras (NVIDIA), Samuli Laine (NVIDIA), Timo Aila (NVIDIA)<br>
 > http://stylegan.xyz/paper
 
-The dataset consists of 70,000 high-quality PNG images at 1024&times;1024 resolution and contains considerable variation in terms of age, ethnicity and image background. It also has good coverage of accessories such as eyeglasses, sunglasses, hats, etc. The images were crawled from Flickr, thus inheriting all the biases of that website, and automatically aligned and cropped. Only images under permissive licenses were collected. Various automatic filters were used to prune the set, and finally Mechanical Turk was used to remove the occasional statues, paintings, or photos of photos.
+The dataset consists of 70,000 high-quality PNG images at 1024&times;1024 resolution and contains considerable variation in terms of age, ethnicity and image background. It also has good coverage of accessories such as eyeglasses, sunglasses, hats, etc. The images were crawled from [Flickr](https://www.flickr.com/), thus inheriting all the biases of that website, and automatically aligned and cropped using [dlib](http://dlib.net/). Only images under permissive licenses were collected. Various automatic filters were used to prune the set, and finally [Amazon Mechanical Turk](https://www.mturk.com/) was used to remove the occasional statues, paintings, or photos of photos.
 
 For business inquiries, please contact [researchinquiries@nvidia.com](mailto:researchinquiries@nvidia.com)
 
@@ -148,3 +148,10 @@ The `ffhq-dataset-v1.json` file contains the following information for each imag
 ## Acknowledgements
 
 We thank Jaakko Lehtinen, David Luebke, and Tuomas Kynk&auml;&auml;nniemi for in-depth discussions and helpful comments; Janne Hellsten, Tero Kuosmanen, and Pekka J&auml;nis for compute infrastructure and help with the code release.
+
+We also thank Vahid Kazemi and Josephine Sullivan for their work on automatic face detection and alignment that enabled us to collect the data in the first place:
+
+> **One Millisecond Face Alignment with an Ensemble of Regression Trees**<br>
+> Vahid Kazemi, Josephine Sullivan<br>
+> Proc. CVPR 2014<br>
+> https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Kazemi_One_Millisecond_Face_2014_CVPR_paper.pdf
