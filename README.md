@@ -39,7 +39,7 @@ All data is hosted on Google Drive:
 
 | Path | Size | Files | Format | Description
 | :--- | :--: | ----: | :----: | :----------
-| [ffhq-dataset](https://drive.google.com/open?id=1u2xu7bSrWxrbUxk-dT-UvEJq8IjdmNTP) | 2.56 TB | 210,010 | | Main folder
+| [ffhq-dataset](https://drive.google.com/open?id=1u2xu7bSrWxrbUxk-dT-UvEJq8IjdmNTP) | 2.56 TB | 210,014 | | Main folder
 | &boxvr;&nbsp; [ffhq-dataset-v1.json](https://drive.google.com/open?id=1IB0BFbN_eRZx9UkJqLHSgJiQhqX-PrI6) | 254 MB | 1 | JSON | Metadata including copyright info, URLs, etc.
 | &boxvr;&nbsp; [images1024x1024](https://drive.google.com/open?id=1u3Hbfn3Q6jsTlte3BY85CGwId77H-OOu) | 89.1 GB | 70,000 | PNG | Aligned and cropped images at 1024&times;1024
 | &boxvr;&nbsp; [thumbnails128x128](https://drive.google.com/open?id=1uJkWCpLUM-BnXW3H_IgVMdfENeNDFNmC) | 1.95 GB | 70,000 | PNG | Thumbnails at 128&times;128
