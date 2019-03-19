@@ -156,3 +156,19 @@ We also thank Vahid Kazemi and Josephine Sullivan for their work on automatic fa
 > Vahid Kazemi, Josephine Sullivan<br>
 > Proc. CVPR 2014<br>
 > https://www.cv-foundation.org/openaccess/content_cvpr_2014/papers/Kazemi_One_Millisecond_Face_2014_CVPR_paper.pdf
+
+## Privacy
+
+When collecting the data, we were careful to only include photos that &ndash; to the best of our knowledge &ndash; were intended for free use and redistribution by their respective authors. That said, we are committed to protecting the privacy of individuals who do not wish their photos to be included.
+
+To find out whether your photo is included in the Flickr-Faces-HQ dataset, please [click this link](https://nvlabs.github.io/ffhq-dataset/search/) to search the dataset with your Flickr username.
+
+To get your photo removed from the Flickr-Faces-HQ dataset:
+
+1. Go to Flickr and do one of the following:
+    - Tag the photo with `no_cv` to indicate that you do not wish it to be used for computer vision research.
+    - Change the license of the photo to `None` (All rights reserved) or any Creative Commons license with `NoDerivs` to indicate that you do not want it to be redistributed.
+    - Make the photo private, i.e., only visible to you and your friends/family.
+    - Get the photo removed from Flickr altogether.
+2. Contact [researchinquiries@nvidia.com](mailto:researchinquiries@nvidia.com). Please include your Flickr username in the email.
+3. We will check the status of all photos from the particular user and update the dataset accordingly.
