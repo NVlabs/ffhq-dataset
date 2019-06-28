@@ -32,7 +32,7 @@ PIL.ImageFile.LOAD_TRUNCATED_IMAGES = True # avoid "Decompressed Data Too Large"
 
 #----------------------------------------------------------------------------
 
-json_spec = dict(file_url='https://drive.google.com/uc?id=1IB0BFbN_eRZx9UkJqLHSgJiQhqX-PrI6', file_path='ffhq-dataset-v1.json', file_size=266533842, file_md5='d5dff1aeb0d9e6a8e5b704eb3549b9e1')
+json_spec = dict(file_url='https://drive.google.com/uc?id=16N0RV4fHI6joBuKbQAoG34V_cQk7vxSA', file_path='ffhq-dataset-v2.json', file_size=267793842, file_md5='425ae20f06a4da1d4dc0f46d40ba5fd6')
 
 tfrecords_specs = [
     dict(file_url='https://drive.google.com/uc?id=1LnhoytWihRRJ7CfhLQ76F8YxwxRDlZN3', file_path='tfrecords/ffhq/ffhq-r02.tfrecords', file_size=6860000,      file_md5='63e062160f1ef9079d4f51206a95ba39'),
@@ -48,9 +48,9 @@ tfrecords_specs = [
 
 license_specs = {
     'json':      dict(file_url='https://drive.google.com/uc?id=1SHafCugkpMZzYhbgOz0zCuYiy-hb9lYX', file_path='LICENSE.txt',                    file_size=1610, file_md5='724f3831aaecd61a84fe98500079abc2'),
-    'images':    dict(file_url='https://drive.google.com/uc?id=1SRxl2GS8CFcqMnD0R-YYibDqHJeczh9R', file_path='images1024x1024/LICENSE.txt',    file_size=1610, file_md5='724f3831aaecd61a84fe98500079abc2'),
-    'thumbs':    dict(file_url='https://drive.google.com/uc?id=1SZVzeMgo4dcHZVBauUH2mXU4Z8P-8ddk', file_path='thumbnails128x128/LICENSE.txt',  file_size=1610, file_md5='724f3831aaecd61a84fe98500079abc2'),
-    'wilds':     dict(file_url='https://drive.google.com/uc?id=1SSHZccNcWoywzXO5Ijwj69PU5Gp5F_tm', file_path='in-the-wild-images/LICENSE.txt', file_size=1610, file_md5='724f3831aaecd61a84fe98500079abc2'),
+    'images':    dict(file_url='https://drive.google.com/uc?id=1sP2qz8TzLkzG2gjwAa4chtdB31THska4', file_path='images1024x1024/LICENSE.txt',    file_size=1610, file_md5='724f3831aaecd61a84fe98500079abc2'),
+    'thumbs':    dict(file_url='https://drive.google.com/uc?id=1iaL1S381LS10VVtqu-b2WfF9TiY75Kmj', file_path='thumbnails128x128/LICENSE.txt',  file_size=1610, file_md5='724f3831aaecd61a84fe98500079abc2'),
+    'wilds':     dict(file_url='https://drive.google.com/uc?id=1rsfFOEQvkd6_Z547qhpq5LhDl2McJEzw', file_path='in-the-wild-images/LICENSE.txt', file_size=1610, file_md5='724f3831aaecd61a84fe98500079abc2'),
     'tfrecords': dict(file_url='https://drive.google.com/uc?id=1SYUmqKdLoTYq-kqsnPsniLScMhspvl5v', file_path='tfrecords/ffhq/LICENSE.txt',     file_size=1610, file_md5='724f3831aaecd61a84fe98500079abc2'),
 }
 
@@ -332,8 +332,9 @@ def recreate_aligned_images(json_data, dst_dir='realign1024x1024', output_size=1
             img = img.resize((output_size, output_size), PIL.Image.ANTIALIAS)
 
         # Save aligned image.
-        dst_file = os.path.join(dst_dir, os.path.basename(src_file))
-        img.save(dst_file)
+        dst_subdir = os.path.join(dst_dir, '%05d' % (item_idx - item_idx % 1000))
+        os.makedirs(dst_subdir, exist_ok=True)
+        img.save(os.path.join(dst_subdir, '%05d.png' % item_idx))
 
     # All done.
     print('\r%d / %d ... done' % (len(json_data), len(json_data)))
