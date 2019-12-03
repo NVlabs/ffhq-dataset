@@ -11,7 +11,7 @@ Flickr-Faces-HQ (FFHQ) is a high-quality image dataset of human faces, originall
 
 > **A Style-Based Generator Architecture for Generative Adversarial Networks**<br>
 > Tero Karras (NVIDIA), Samuli Laine (NVIDIA), Timo Aila (NVIDIA)<br>
-> http://stylegan.xyz/paper
+> https://arxiv.org/abs/1812.04948
 
 The dataset consists of 70,000 high-quality PNG images at 1024&times;1024 resolution and contains considerable variation in terms of age, ethnicity and image background. It also has good coverage of accessories such as eyeglasses, sunglasses, hats, etc. The images were crawled from [Flickr](https://www.flickr.com/), thus inheriting all the biases of that website, and automatically aligned and cropped using [dlib](http://dlib.net/). Only images under permissive licenses were collected. Various automatic filters were used to prune the set, and finally [Amazon Mechanical Turk](https://www.mturk.com/) was used to remove the occasional statues, paintings, or photos of photos.
 
@@ -44,14 +44,14 @@ All data is hosted on Google Drive:
 | &boxvr;&nbsp; [images1024x1024](https://drive.google.com/open?id=1tZUcXDBeOibC6jcMCtgRRz67pzrAHeHL) | 89.1 GB | 70,000 | PNG | Aligned and cropped images at 1024&times;1024
 | &boxvr;&nbsp; [thumbnails128x128](https://drive.google.com/open?id=1tg-Ur7d4vk1T8Bn0pPpUSQPxlPGBlGfv) | 1.95 GB | 70,000 | PNG | Thumbnails at 128&times;128
 | &boxvr;&nbsp; [in-the-wild-images](https://drive.google.com/open?id=1ZX7QOy6LZuTLTnsOtQk-kmKq2-69l5hu) | 955 GB | 70,000 | PNG | Original images from Flickr
-| &boxvr;&nbsp; [tfrecords](https://drive.google.com/open?id=1LTBpJ0W_WLjqza3zdayligS8Dh1V1gA6) | 273 GB | 9 | tfrecords | Multi-resolution data for [StyleGAN](http://stylegan.xyz/code) and [ProGAN](https://github.com/tkarras/progressive_growing_of_gans)
+| &boxvr;&nbsp; [tfrecords](https://drive.google.com/open?id=1LTBpJ0W_WLjqza3zdayligS8Dh1V1gA6) | 273 GB | 9 | tfrecords | Multi-resolution data for [StyleGAN](https://github.com/NVlabs/stylegan) and [ProGAN](https://github.com/tkarras/progressive_growing_of_gans)
 | &boxur;&nbsp; [zips](https://drive.google.com/open?id=1WocxvZ4GEZ1DI8dOz30aSj2zT6pkATYS) | 1.28 TB | 4 | ZIP | Contents of each folder as a ZIP archive.
 
 High-level statistics:
 
 ![Pie charts](./ffhq-piecharts.png)
 
-For use cases that require separate training and validation sets, we have appointed the first 60,000 images to be used for training and the remaining 10,000 for validation. In the [StyleGAN paper](http://stylegan.xyz/paper), however, we used all 70,000 images for training.
+For use cases that require separate training and validation sets, we have appointed the first 60,000 images to be used for training and the remaining 10,000 for validation. In the [StyleGAN paper](https://arxiv.org/abs/1812.04948), however, we used all 70,000 images for training.
 
 We have explicitly made sure that there are no duplicate images in the dataset itself. However, please note that the `in-the-wild` folder may contain multiple copies of the same image in cases where we extracted several different faces from the same image.
 
