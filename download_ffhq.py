@@ -6,7 +6,7 @@
 # http://creativecommons.org/licenses/by-nc-sa/4.0/ or send a letter to
 # Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
-"""Download Flickr-Face-HQ (FFHQ) dataset to current working directory."""
+"""Download Flickr-Faces-HQ (FFHQ) dataset to current working directory."""
 
 import os
 import sys
@@ -96,18 +96,27 @@ def download_file(session, file_spec, stats, chunk_size=128, num_attempts=10):
             with stats['lock']:
                 stats['bytes_done'] -= data_size
 
-            # Last attempt => raise error.
-            if not attempts_left:
-                raise
-
-            # Handle Google Drive virus checker nag.
+            # Handle known failure cases.
             if data_size > 0 and data_size < 8192:
                 with open(tmp_path, 'rb') as f:
                     data = f.read()
-                links = [html.unescape(link) for link in data.decode('utf-8').split('"') if 'export=download' in link]
+                data_str = data.decode('utf-8')
+
+                # Google Drive virus checker nag.
+                links = [html.unescape(link) for link in data_str.split('"') if 'export=download' in link]
                 if len(links) == 1:
-                    file_url = requests.compat.urljoin(file_url, links[0])
-                    continue
+                    if attempts_left:
+                        file_url = requests.compat.urljoin(file_url, links[0])
+                        continue
+
+                # Google Drive quota exceeded.
+                if 'Google Drive - Quota exceeded' in data_str:
+                    if not attempts_left:
+                        raise IOError("Google Drive download quota exceeded -- please try again later")
+
+            # Last attempt => raise error.
+            if not attempts_left:
+                raise
 
     # Rename temp file to the correct name.
     os.replace(tmp_path, file_path) # atomic
@@ -173,7 +182,7 @@ def download_files(file_specs, num_threads=32, status_delay=0.2, timing_window=5
             files_done = stats['files_done']
             bytes_done = stats['bytes_done']
         spinner = spinner[1:] + spinner[:1]
-        timing = timing[max(len(timing) - timing_window + 1, 0):] + [(time.clock(), bytes_done)]
+        timing = timing[max(len(timing) - timing_window + 1, 0):] + [(time.time(), bytes_done)]
         bandwidth = max((timing[-1][1] - timing[0][1]) / max(timing[-1][0] - timing[0][0], 1e-8), 0)
         bandwidth_unit, bandwidth_div = choose_bytes_unit(bandwidth)
         eta = format_time((bytes_total - bytes_done) / max(bandwidth, 1))
