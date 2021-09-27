@@ -56,7 +56,7 @@ license_specs = {
 
 #----------------------------------------------------------------------------
 
-def download_file(session, file_spec, stats, chunk_size=128, num_attempts=10):
+def download_file(session, file_spec, stats, chunk_size=128, num_attempts=10, **kwargs):
     file_path = file_spec['file_path']
     file_url = file_spec['file_url']
     file_dir = os.path.dirname(file_path)
@@ -256,8 +256,14 @@ def print_statistics(json_data):
 
 #----------------------------------------------------------------------------
 
-def recreate_aligned_images(json_data, dst_dir='realign1024x1024', output_size=1024, transform_size=4096, enable_padding=True):
+def recreate_aligned_images(json_data, source_dir, dst_dir='realign1024x1024', output_size=1024, transform_size=4096, enable_padding=True, rotate_level=True, random_shift=0.0, retry_crops=False):
     print('Recreating aligned images...')
+
+    # Fix random seed for reproducibility
+    np.random.seed(12345)
+    # The following random numbers are unused in present implementation, but we consume them for reproducibility
+    _ = np.random.normal(0, 1, (len(json_data.values()), 2))
+
     if dst_dir:
         os.makedirs(dst_dir, exist_ok=True)
         shutil.copyfile('LICENSE.txt', os.path.join(dst_dir, 'LICENSE.txt'))
@@ -289,20 +295,45 @@ def recreate_aligned_images(json_data, dst_dir='realign1024x1024', output_size=1
         eye_to_mouth = mouth_avg - eye_avg
 
         # Choose oriented crop rectangle.
-        x = eye_to_eye - np.flipud(eye_to_mouth) * [-1, 1]
-        x /= np.hypot(*x)
-        x *= max(np.hypot(*eye_to_eye) * 2.0, np.hypot(*eye_to_mouth) * 1.8)
-        y = np.flipud(x) * [-1, 1]
-        c = eye_avg + eye_to_mouth * 0.1
-        quad = np.stack([c - x - y, c - x + y, c + x + y, c + x - y])
-        qsize = np.hypot(*x) * 2
+        if rotate_level:
+            x = eye_to_eye - np.flipud(eye_to_mouth) * [-1, 1]
+            x /= np.hypot(*x)
+            x *= max(np.hypot(*eye_to_eye) * 2.0, np.hypot(*eye_to_mouth) * 1.8)
+            y = np.flipud(x) * [-1, 1]
+            c0 = eye_avg + eye_to_mouth * 0.1
+        else:
+            x = np.array([1, 0], dtype=np.float64)
+            x *= max(np.hypot(*eye_to_eye) * 2.0, np.hypot(*eye_to_mouth) * 1.8)
+            y = np.flipud(x) * [-1, 1]
+            c0 = eye_avg + eye_to_mouth * 0.1
 
         # Load in-the-wild image.
-        src_file = item['in_the_wild']['file_path']
+        src_file = os.path.join(source_dir, item['in_the_wild']['file_path'])
         if not os.path.isfile(src_file):
             print('\nCannot find source image. Please run "--wilds" before "--align".')
             return
         img = PIL.Image.open(src_file)
+
+        quad = np.stack([c0 - x - y, c0 - x + y, c0 + x + y, c0 + x - y])
+        qsize = np.hypot(*x) * 2
+
+        # Keep drawing new random crop offsets until we find one that is contained in the image
+        # and does not require padding
+        if random_shift != 0:
+            for _ in range(1000):
+                # Offset the crop rectange center by a random shift proportional to image dimension
+                # and the requested standard deviation
+                c = (c0 + np.hypot(*x)*2 * random_shift * np.random.normal(0, 1, c0.shape))
+                quad = np.stack([c - x - y, c - x + y, c + x + y, c + x - y])
+                crop = (int(np.floor(min(quad[:,0]))), int(np.floor(min(quad[:,1]))), int(np.ceil(max(quad[:,0]))), int(np.ceil(max(quad[:,1]))))
+                if not retry_crops or not (crop[0] < 0 or crop[1] < 0 or crop[2] >= img.width or crop[3] >= img.height):
+                    # We're happy with this crop (either it fits within the image, or retries are disabled)
+                    break
+            else:
+                # rejected N times, give up and move to next image
+                # (does not happen in practice with the FFHQ data)
+                print('rejected image')
+                return
 
         # Shrink.
         shrink = int(np.floor(qsize / output_size * 0.5))
@@ -378,7 +409,7 @@ def run(tasks, **download_kwargs):
         download_files(specs, **download_kwargs)
 
     if 'align' in tasks:
-        recreate_aligned_images(json_data)
+        recreate_aligned_images(json_data, source_dir=download_kwargs['source_dir'], rotate_level=not download_kwargs['no_rotation'], random_shift=download_kwargs['random_shift'], enable_padding=not download_kwargs['no_padding'], retry_crops=download_kwargs['retry_crops'])
 
 #----------------------------------------------------------------------------
 
@@ -396,6 +427,11 @@ def run_cmdline(argv):
     parser.add_argument('--timing_window',      help='samples for estimating download eta (default: 50)', type=int, default=50, metavar='LEN')
     parser.add_argument('--chunk_size',         help='chunk size for each download thread (default: 128)', type=int, default=128, metavar='KB')
     parser.add_argument('--num_attempts',       help='number of download attempts per file (default: 10)', type=int, default=10, metavar='NUM')
+    parser.add_argument('--random-shift',       help='standard deviation of random crop rectangle jitter', type=float, default=0.0, metavar='SHIFT')
+    parser.add_argument('--retry-crops',        help='retry random shift if crop rectangle falls outside image (up to 1000 times)', dest='retry_crops', default=False, action='store_true')
+    parser.add_argument('--no-rotation',        help='keep the original orientation of images', dest='no_rotation', default=False, action='store_true')
+    parser.add_argument('--no-padding',         help='do not apply blur-padding outside and near the image borders', dest='no_padding', default=False, action='store_true')
+    parser.add_argument('--source-dir',         help='where to find already downloaded FFHQ source data', default='', metavar='DIR')
 
     args = parser.parse_args()
     if not args.tasks:

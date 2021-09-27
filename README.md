@@ -69,19 +69,25 @@ usage: download_ffhq.py [-h] [-j] [-s] [-i] [-t] [-w] [-r] [-a]
 Download Flickr-Face-HQ (FFHQ) dataset to current working directory.
 
 optional arguments:
-  -h, --help           show this help message and exit
-  -j, --json           download metadata as JSON (254 MB)
-  -s, --stats          print statistics about the dataset
-  -i, --images         download 1024x1024 images as PNG (89.1 GB)
-  -t, --thumbs         download 128x128 thumbnails as PNG (1.95 GB)
-  -w, --wilds          download in-the-wild images as PNG (955 GB)
-  -r, --tfrecords      download multi-resolution TFRecords (273 GB)
-  -a, --align          recreate 1024x1024 images from in-the-wild images
-  --num_threads NUM    number of concurrent download threads (default: 32)
-  --status_delay SEC   time between download status prints (default: 0.2)
-  --timing_window LEN  samples for estimating download eta (default: 50)
-  --chunk_size KB      chunk size for each download thread (default: 128)
-  --num_attempts NUM   number of download attempts per file (default: 10)
+  -h, --help            show this help message and exit
+  -j, --json            download metadata as JSON (254 MB)
+  -s, --stats           print statistics about the dataset
+  -i, --images          download 1024x1024 images as PNG (89.1 GB)
+  -t, --thumbs          download 128x128 thumbnails as PNG (1.95 GB)
+  -w, --wilds           download in-the-wild images as PNG (955 GB)
+  -r, --tfrecords       download multi-resolution TFRecords (273 GB)
+  -a, --align           recreate 1024x1024 images from in-the-wild images
+  --num_threads NUM     number of concurrent download threads (default: 32)
+  --status_delay SEC    time between download status prints (default: 0.2)
+  --timing_window LEN   samples for estimating download eta (default: 50)
+  --chunk_size KB       chunk size for each download thread (default: 128)
+  --num_attempts NUM    number of download attempts per file (default: 10)
+  --random-shift SHIFT  standard deviation of random crop rectangle jitter
+  --retry-crops         retry random shift if crop rectangle falls outside image (up to 1000
+                        times)
+  --no-rotation         keep the original orientation of images
+  --no-padding          do not apply blur-padding outside and near the image borders
+  --source-dir DIR      where to find already downloaded FFHQ source data
 ```
 
 ```
@@ -94,6 +100,17 @@ Downloading 70000 files...
 ```
 
 The script also serves as a reference implementation of the automated scheme that we used to align and crop the images. Once you have downloaded the in-the-wild images with `python download_ffhq.py --wilds`, you can run `python download_ffhq.py --align` to reproduce exact replicas of the aligned 1024&times;1024 images using the facial landmark locations included in the metadata.
+
+### Reproducing the unaligned FFHQ
+
+To reproduce the "unaligned FFHQ" dataset as used in the [Alias-Free Generative Adversarial Networks](https://arxiv.org/abs/2106.12423) paper, use the following options:
+
+```
+python download_ffhq.py \
+    --source-dir <path/to/downloaded/ffhq> \
+    --align --no-rotation --random-shift 0.2 --no-padding --retry-crops
+```
+
 
 ## Metadata
 
