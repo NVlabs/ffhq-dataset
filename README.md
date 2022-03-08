@@ -15,7 +15,7 @@ Flickr-Faces-HQ (FFHQ) is a high-quality image dataset of human faces, originall
 
 The dataset consists of 70,000 high-quality PNG images at 1024&times;1024 resolution and contains considerable variation in terms of age, ethnicity and image background. It also has good coverage of accessories such as eyeglasses, sunglasses, hats, etc. The images were crawled from [Flickr](https://www.flickr.com/), thus inheriting all the biases of that website, and automatically aligned and cropped using [dlib](http://dlib.net/). Only images under permissive licenses were collected. Various automatic filters were used to prune the set, and finally [Amazon Mechanical Turk](https://www.mturk.com/) was used to remove the occasional statues, paintings, or photos of photos.
 
-For business inquiries, please visit our website and submit the form: [NVIDIA Research Licensing](https://www.nvidia.com/en-us/research/inquiries/)
+Please note that this dataset is not intended for, and should not be used for, development or improvement of facial recognition technologies.  For business inquiries, please visit our website and submit the form: [NVIDIA Research Licensing](https://www.nvidia.com/en-us/research/inquiries/)
 
 ## Licenses
 
