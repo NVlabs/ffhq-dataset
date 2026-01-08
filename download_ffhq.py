@@ -102,12 +102,29 @@ def download_file(session, file_spec, stats, chunk_size=128, num_attempts=10, **
                     data = f.read()
                 data_str = data.decode('utf-8')
 
-                # Google Drive virus checker nag.
+                # Google Drive virus checker nag (old format).
                 links = [html.unescape(link) for link in data_str.split('"') if 'export=download' in link]
                 if len(links) == 1:
                     if attempts_left:
                         file_url = requests.compat.urljoin(file_url, links[0])
                         continue
+
+                # Google Drive virus checker nag (new format with form action).
+                if 'drive.usercontent.google.com/download' in data_str and 'confirm' in data_str:
+                    import re
+                    # Extract form parameters from the HTML
+                    id_match = re.search(r'name="id"\s+value="([^"]+)"', data_str)
+                    confirm_match = re.search(r'name="confirm"\s+value="([^"]+)"', data_str)
+                    uuid_match = re.search(r'name="uuid"\s+value="([^"]+)"', data_str)
+                    if id_match and confirm_match:
+                        file_id = id_match.group(1)
+                        confirm = confirm_match.group(1)
+                        new_url = f'https://drive.usercontent.google.com/download?id={file_id}&confirm={confirm}'
+                        if uuid_match:
+                            new_url += f'&uuid={uuid_match.group(1)}'
+                        if attempts_left:
+                            file_url = new_url
+                            continue
 
                 # Google Drive quota exceeded.
                 if 'Google Drive - Quota exceeded' in data_str:
